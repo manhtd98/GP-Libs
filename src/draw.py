@@ -14,4 +14,4 @@ def init_draw(toolbox, l):
         n = g.get_node(i)
         n.attr["label"] = labels[i]
 
-    g.draw(f"tree{l}.png")
+    g.draw(f"tree/tree-{l}.png")

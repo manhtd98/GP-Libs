@@ -35,58 +35,55 @@ def load_datasets(dataset_name):
 
 
 def run_experiments(dataname, out_file="tmp.json"):
-      X_train, y_train, X_test, y_test = load_datasets(dataname)
-      start_time = time.time()
-      classifiers = []
-      predict_labels = []
-      for i in range(y_train.shape[1]):
-            classifier = GPClasification()
-            classifier.fit(X_train, y_train[:, i].reshape(-1, 1))
-            predict_labels.append(classifier.predict(X_train))
-            classifiers.append(classifier)
-      
-      predict_labels = np.array(predict_labels)
-      predict_labels = predict_labels[:, :, 0].T
-      print(predict_labels.shape, y_train.shape)
-      # train_time = time.time() - start_time
-      gp_relation = []
-      predict_labels_gp = []
-      for i in range(y_train.shape[1]):
-            classifier = GPClasification()
-            classifier.fit(predict_labels, y_train[:, i].reshape(-1, 1))
-            predict_labels_gp.append(classifier.predict(predict_labels))
-            gp_relation.append(classifier)
-            
-      # prediction = prediction[:, 72:]
-      
-      # res_train = test_score(y_train, prediction)
+    X_train, y_train, X_test, y_test = load_datasets(dataname)
+    start_time = time.time()
+    classifiers = []
+    predict_labels = []
+    for i in range(y_train.shape[1]):
+        classifier = GPClasification()
+        classifier.fit(X_train, y_train[:, i].reshape(-1, 1), "binary-"+str(i))
+        predict_labels.append(classifier.predict(X_train))
+        classifiers.append(classifier)
+    predict_labels = np.hstack(predict_labels)
+    gp_relation = []
+    predict_labels_gp = []
+    for i in range(y_train.shape[1]):
+        classifier = GPClasification()
+        classifier.fit(
+            predict_labels, y_train[:, i].reshape(-1, 1), "relation-"+str(i))
+        predict_labels_gp.append(classifier.predict(predict_labels))
+        gp_relation.append(classifier)
+    train_time = time.time() - start_time
+    predict_labels_gp = np.hstack(predict_labels_gp)
+    res_train = test_score(y_train, predict_labels_gp)
+    print(res_train)
 
-      # prediction = classifier.predict(X_test)
-      # prediction = prediction[:, 72:]
-      # # print(y_test.shape, prediction.shape)
-      # res_test = test_score(y_test, prediction)
-      # res = {
-      #       "result_train": res_train,
-      #       "result_test": res_test,
-      #       "training sample": X_train.shape[0],
-      #       "test sample": X_test.shape[0],
-      #       "training time": train_time,
-      # }
-      # os.makedirs("/".join(out_file.split("/")[:-1]))
-      # with open(out_file, "w") as f:
-      #       json.dump(res, f)
-      # return res
-
-
+    # TEST LOOP
+    predict_labels = []
+    for classifier in classifiers:
+        predict_labels.append(classifier.predict(X_test))
+    predict_labels = np.hstack(predict_labels)
+    predict_labels_gp = []
+    for classifier in gp_relation:
+        predict_labels_gp.append(classifier.predict(predict_labels))
+    predict_labels_gp = np.hstack(predict_labels_gp)
+    res_test = test_score(y_test, predict_labels_gp)
+    print(res_test)
+    res = {
+        "result_train": res_train,
+        "result_test": res_test,
+        "training sample": X_train.shape[0],
+        "test sample": X_test.shape[0],
+        "training time": train_time,
+    }
+    os.makedirs("/".join(out_file.split("/")[:-1]))
+    with open(out_file, "w") as f:
+        json.dump(res, f)
+    return res
 def run_gp(i, dataname):
     gen_seed()
-#     ("br", BinaryRelevance)
-#     for name, bs in base:
-    output_name = f"results/{dataname}/ensemble/{i}.json"
-
+    output_name = f"results/{dataname}/gp/{i}.json"
     run_experiments(dataname=dataname, out_file=output_name)
-
-
 if __name__ == "__main__":
     run_gp(1, "emotions")
     # number_of_cpu = joblib.cpu_count()

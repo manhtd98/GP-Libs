@@ -5,11 +5,12 @@ from .toolbox import init_toolbox
 from .helpers import test_score
 from .draw import init_draw
 from skmultilearn.dataset import load_dataset
-
+import random
+import datetime
 
 class GPClasification:
     def __init__(
-        self, population=512, sample=0.1, epoch=50, alpha=0.8, beta=0.2, hallofframe=1
+        self, population=512, sample=1, epoch=50, alpha=0.8, beta=0.2, hallofframe=1
     ):
         self.population = population
         self.sample = sample
@@ -20,7 +21,7 @@ class GPClasification:
         self.beta = beta
         self.hallofframe = hallofframe
 
-    def fit(self, x_train, y_train):
+    def fit(self, x_train, y_train, out_name):
         num_attr = x_train.shape[1]
         self.num_attr = num_attr
         self.pset = create_pset(self.num_attr)
@@ -43,7 +44,7 @@ class GPClasification:
             pop, toolbox, self.alpha, self.beta, self.epoch, stats, halloffame=hof
         )
         self.toolbox = toolbox
-        # init_draw(self.toolbox, nlabel)
+        init_draw(self.toolbox, out_name)
         self.hoft = hof[0]
         return self
 

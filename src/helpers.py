@@ -17,14 +17,14 @@ def test_score(y_test, prediction):
     hamming_loss = metrics.hamming_loss(y_test, prediction)
     f1 = metrics.f1_score(y_test, prediction, average="macro")
     acc = metrics.accuracy_score(y_test, prediction)
-    auc_roc = metrics.roc_auc_score(y_test, prediction.toarray(), average="macro")
+    auc_roc = metrics.roc_auc_score(y_test, prediction, average="macro")
     jaccard = metrics.jaccard_score(y_test, prediction, average="macro")
     precision_score = metrics.precision_score(y_test, prediction, average="macro")
     recall_score = metrics.recall_score(y_test, prediction, average="macro")
-    average_precision_score = metrics.average_precision_score(y_test, prediction.toarray(), average="macro")
-    zero_one_loss = metrics.zero_one_loss(y_test, prediction.toarray())
-    log_loss = metrics.log_loss(y_test, prediction.toarray())
-    label_ranking_loss = metrics.label_ranking_loss(y_test, prediction.toarray())
+    average_precision_score = metrics.average_precision_score(y_test, prediction, average="macro")
+    zero_one_loss = metrics.zero_one_loss(y_test, prediction)
+    log_loss = metrics.log_loss(y_test, prediction)
+    label_ranking_loss = metrics.label_ranking_loss(y_test, prediction)
     res = {
         "hamming_loss": hamming_loss,
         "f1":f1, 
