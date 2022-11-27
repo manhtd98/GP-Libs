@@ -56,7 +56,6 @@ def run_experiments(dataname, out_file="tmp.json"):
     train_time = time.time() - start_time
     predict_labels_gp = np.hstack(predict_labels_gp)
     res_train = test_score(y_train, predict_labels_gp)
-    print(res_train)
 
     # TEST LOOP
     predict_labels = []
@@ -68,7 +67,6 @@ def run_experiments(dataname, out_file="tmp.json"):
         predict_labels_gp.append(classifier.predict(predict_labels))
     predict_labels_gp = np.hstack(predict_labels_gp)
     res_test = test_score(y_test, predict_labels_gp)
-    print(res_test)
     res = {
         "result_train": res_train,
         "result_test": res_test,
@@ -76,7 +74,9 @@ def run_experiments(dataname, out_file="tmp.json"):
         "test sample": X_test.shape[0],
         "training time": train_time,
     }
-    os.makedirs("/".join(out_file.split("/")[:-1]))
+    dir_name = "/".join(out_file.split("/")[:-1])
+    if not os.path.exists(dir_name):
+      os.makedirs(dir_name)
     with open(out_file, "w") as f:
         json.dump(res, f)
     return res
