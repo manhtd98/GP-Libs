@@ -36,15 +36,22 @@ def load_datasets(dataset_name):
 
 def run_experiments(dataname, out_file="tmp.json"):
     X_train, y_train, X_test, y_test = load_datasets(dataname)
-    start_time = time.time()
-    classifiers = []
-    predict_labels = []
-    for i in range(y_train.shape[1]):
-        classifier = GPClasification()
-        classifier.fit(X_train, y_train[:, i].reshape(-1, 1), "ex1-binary-"+str(i))
-        predict_labels.append(classifier.predict(X_train))
-        classifiers.append(classifier)
-    predict_labels = np.hstack(predict_labels)
+    import pandas as pd
+    data = np.concatenate((X_train, y_train), axis=1)
+    df = pd.DataFrame(data)
+    df.to_csv("train.csv", index=False)
+    data = np.concatenate((X_test, y_test), axis=1)
+    df = pd.DataFrame(data)
+    df.to_csv("test.csv", index=False)
+    # start_time = time.time()
+    # classifiers = []
+    # predict_labels = []
+    # for i in range(y_train.shape[1]):
+    #     classifier = GPClasification()
+    #     classifier.fit(X_train, y_train[:, i].reshape(-1, 1), "ex1-binary-"+str(i))
+    #     predict_labels.append(classifier.predict(X_train))
+    #     classifiers.append(classifier)
+    # predict_labels = np.hstack(predict_labels)
     
     gp_relation = []
     predict_labels_gp = []
@@ -88,7 +95,7 @@ def run_gp(i, dataname):
     output_name = f"results/{dataname}/gp/{i}.json"
     run_experiments(dataname=dataname, out_file=output_name)
 if __name__ == "__main__":
-    run_gp(1, "emotions")
+    run_gp(1, "birds")
     # number_of_cpu = joblib.cpu_count()
     # for data in datasets:
     #       logger.info(f"RUNNING EXPERIMENCE {data}: {number_of_cpu} CORES")

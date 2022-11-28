@@ -16,21 +16,21 @@ def create_pset(num_attr):
     pset.addPrimitive(operator.sub, [float, float], float)
     pset.addPrimitive(operator.mul, [float, float], float)
     pset.addPrimitive(protectedDiv, [float, float], float)
-    # # logic operators
-    # # Define a new if-then-else function
-    # def if_then_else(input, output1, output2):
-    #     if input:
-    #         return output1
-    #     else:
-    #         return output2
+    # logic operators
+    # Define a new if-then-else function
+    def if_then_else(input, output1, output2):
+        if input:
+            return output1
+        else:
+            return output2
 
-    # pset.addPrimitive(operator.lt, [float, float], bool)
-    # pset.addPrimitive(operator.eq, [float, float], bool)
-    # pset.addPrimitive(if_then_else, [bool, float, float], float)
+    pset.addPrimitive(operator.lt, [float, float], bool)
+    pset.addPrimitive(operator.eq, [float, float], bool)
+    pset.addPrimitive(if_then_else, [bool, float, float], float)
     pset.addEphemeralConstant("rand"+str(random.randint(1, 100000)), \
         lambda: random.random() * 100, float)
     # pset.addEphemeralConstant("rand101", lambda: random.randint(0, 1), float)
-    # pset.addTerminal(False, bool)
-    # pset.addTerminal(True, bool)
+    pset.addTerminal(False, bool)
+    pset.addTerminal(True, bool)
 
     return pset
