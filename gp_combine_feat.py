@@ -45,16 +45,18 @@ def run_experiments(dataname, out_file="tmp.json"):
         predict_labels.append(classifier.predict(X_train))
         classifiers.append(classifier)
     predict_labels = np.hstack(predict_labels)
+    X_train = np.concatenate((X_train, predict_labels), axis=0)
     gp_relation = []
     predict_labels_gp = []
     for i in range(y_train.shape[1]):
         classifier = GPClasification()
         classifier.fit(
-            predict_labels, y_train[:, i].reshape(-1, 1), "relation-"+str(i))
+            X_train, y_train[:, i].reshape(-1, 1), "relation-"+str(i))
         predict_labels_gp.append(classifier.predict(predict_labels))
         gp_relation.append(classifier)
     train_time = time.time() - start_time
     predict_labels_gp = np.hstack(predict_labels_gp)
+    res_train = test_score(y_train, predict_labels)
     res_train = test_score(y_train, predict_labels_gp)
 
     # TEST LOOP
@@ -62,10 +64,12 @@ def run_experiments(dataname, out_file="tmp.json"):
     for classifier in classifiers:
         predict_labels.append(classifier.predict(X_test))
     predict_labels = np.hstack(predict_labels)
+    X_test = np.concatenate((X_test, predict_labels), axis=0)
     predict_labels_gp = []
     for classifier in gp_relation:
-        predict_labels_gp.append(classifier.predict(predict_labels))
+        predict_labels_gp.append(classifier.predict(X_test))
     predict_labels_gp = np.hstack(predict_labels_gp)
+    res_train = test_score(y_test, predict_labels)
     res_test = test_score(y_test, predict_labels_gp)
     res = {
         "result_train": res_train,
@@ -76,14 +80,18 @@ def run_experiments(dataname, out_file="tmp.json"):
     }
     dir_name = "/".join(out_file.split("/")[:-1])
     if not os.path.exists(dir_name):
-      os.makedirs(dir_name)
+        os.makedirs(dir_name)
     with open(out_file, "w") as f:
         json.dump(res, f)
     return res
+
+
 def run_gp(i, dataname):
     gen_seed()
     output_name = f"results/{dataname}/gp/{i}.json"
     run_experiments(dataname=dataname, out_file=output_name)
+
+
 if __name__ == "__main__":
     run_gp(1, "emotions")
     # number_of_cpu = joblib.cpu_count()
