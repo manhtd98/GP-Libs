@@ -45,7 +45,7 @@ def run_experiments(dataname, out_file="tmp.json"):
         predict_labels.append(classifier.predict(X_train))
         classifiers.append(classifier)
     predict_labels = np.hstack(predict_labels)
-    X_train = np.concatenate((X_train, predict_labels), axis=0)
+    X_train = np.concatenate((X_train, predict_labels), axis=1)
     gp_relation = []
     predict_labels_gp = []
     for i in range(y_train.shape[1]):
@@ -64,7 +64,7 @@ def run_experiments(dataname, out_file="tmp.json"):
     for classifier in classifiers:
         predict_labels.append(classifier.predict(X_test))
     predict_labels = np.hstack(predict_labels)
-    X_test = np.concatenate((X_test, predict_labels), axis=0)
+    X_test = np.concatenate((X_test, predict_labels), axis=1)
     predict_labels_gp = []
     for classifier in gp_relation:
         predict_labels_gp.append(classifier.predict(X_test))
