@@ -41,7 +41,7 @@ def run_experiments(dataname, out_file="tmp.json"):
     predict_labels = []
     for i in range(y_train.shape[1]):
         classifier = GPClasification()
-        classifier.fit(X_train, y_train[:, i].reshape(-1, 1), "binary-"+str(i))
+        classifier.fit(X_train, y_train[:, i].reshape(-1, 1), "ex2-binary-"+str(i))
         predict_labels.append(classifier.predict(X_train))
         classifiers.append(classifier)
     predict_labels = np.hstack(predict_labels)
@@ -51,7 +51,7 @@ def run_experiments(dataname, out_file="tmp.json"):
     for i in range(y_train.shape[1]):
         classifier = GPClasification()
         classifier.fit(
-            X_train, y_train[:, i].reshape(-1, 1), "relation-"+str(i))
+            X_train, y_train[:, i].reshape(-1, 1), "ex2-combine-"+str(i))
         predict_labels_gp.append(classifier.predict(predict_labels))
         gp_relation.append(classifier)
     train_time = time.time() - start_time
