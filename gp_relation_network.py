@@ -8,6 +8,8 @@ from src.helpers import gen_seed
 from src.pset import create_pset
 import numpy as np
 import os
+from sklearn.preprocessing import MinMaxScaler
+import pandas as pd
 datasets = (
     "birds",
     "emotions",
@@ -35,13 +37,20 @@ def load_datasets(dataset_name):
 
 
 def run_experiments(dataname, out_file="tmp.json"):
+    
+    scaler = MinMaxScaler()
     X_train, y_train, X_test, y_test = load_datasets(dataname)
-    import pandas as pd
+    scaler.fit(X_train)
+    X_train = scaler.transform(X_train)
+    
     data = np.concatenate((X_train, y_train), axis=1)
     df = pd.DataFrame(data)
+    df = df.fillna(value=0)
     df.to_csv("train.csv", index=False)
+    X_test = scaler.transform(X_test)
     data = np.concatenate((X_test, y_test), axis=1)
     df = pd.DataFrame(data)
+    df = df.fillna(value=0)
     df.to_csv("test.csv", index=False)
     start_time = time.time()
     classifiers = []
@@ -95,7 +104,7 @@ def run_gp(i, dataname):
     output_name = f"results/{dataname}/gp/{i}.json"
     run_experiments(dataname=dataname, out_file=output_name)
 if __name__ == "__main__":
-    run_gp(1, "birds")
+    run_gp(1, "emotions")
     # number_of_cpu = joblib.cpu_count()
     # for data in datasets:
     #       logger.info(f"RUNNING EXPERIMENCE {data}: {number_of_cpu} CORES")
